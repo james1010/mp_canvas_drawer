@@ -226,23 +226,28 @@ Component({
           resolve(this.cache[url])
         } else {
           const objExp = new RegExp(/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/)
-          if (objExp.test(url)) {
+          // if (objExp.test(url)) {
             wx.getImageInfo({
               src: url,
               complete: res => {
                 if (res.errMsg === 'getImageInfo:ok') {
-                  this.cache[url] = res.path
-                  resolve(res.path)
+                  if (objExp.test(url)) {
+                    this.cache[url] = res.path
+                    resolve(res.path)
+                  } else {
+                    this.cache[url] = url
+                     resolve(url)
+                  }
                 } else {
                   this.triggerEvent('getImage', {errMsg: 'canvasdrawer:download fail'})
                   reject(new Error('getImageInfo fail'))
                 }
               }
             })
-          } else {
-            this.cache[url] = url
-            resolve(url)
-          }
+          // } else {
+          //   this.cache[url] = url
+          //   resolve(url)
+          // }
         }
       })
     },
